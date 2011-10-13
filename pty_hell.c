@@ -1,6 +1,10 @@
 #include "common.h"
 #include "pty_hell.h"
 
+char buf[256];
+
+static int ptm=0, pid;
+
 int login_tty(int fd)
 {
 	(void) setsid();
@@ -132,15 +136,25 @@ int write_ptm(char* buf, int sz)
 
 void init_ptm(void)
 {
-	ptm = forkpty(&ptm, NULL, NULL, NULL);
-	if(ptm == -1)
+	pid = forkpty(&ptm, NULL, NULL, NULL);
+	if(pid == -1)
 	{
-		put_str("Failed to fork");
+		put_str("Failed to fork\n");
+	} else {
+		put_str("Forking\n");
 	}
-	if(ptm == 0)
+	update_part();
+	if(pid == 0)
 	{
 		execl("/bin/bash", "", NULL);
 	}
+}
+
+int read_ptm(void)
+{
+	int n;
+	n = read(ptm, buf, 256);
+	put_buf(buf, n);
 }
 
 int get_ptm(void)

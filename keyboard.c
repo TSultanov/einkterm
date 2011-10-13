@@ -29,48 +29,49 @@ int open_keyboard(void)
 }
 
 void read_keyboard(void){
-    int value,i;
+    int value,i,rd;
     struct input_event ev[64];
     static char low=1, sym=0;
-    read (keyboard, ev, (sizeof (struct input_event)) * 64);
+    rd = read (keyboard, ev, (sizeof (struct input_event)) * 64);
+    for(i=0; i<(rd/(sizeof (struct input_event))); i++){
+        value = ev[i].value;
     
-        value = ev[0].value;
-    
-        if (/*value != ' ' && ev[1].value == 1 &&*/ ev[0].value == 1){ // Only read the key press event
+        if (/*value != ' ' && ev[1].value == 1 &&*/ ev[i].value == 1){ // Only read the key press event
             //update_part(bitmap, 800*600/2);
-            switch(ev[0].code){
+            switch(ev[i].code){
                 case 0x35: system("poweroff"); break;
                 case 0x29: low=0; break;
                 case 42: sym=1; break;
                 default: if(low&&(!sym))
                             {//put_str(key[ev[0].code]);
-                            write_ptm(key[ev[0].code], 1);
+                            write_ptm(key[ev[i].code], 1);
                             //command[com_p] = key[ev[0].code][0];
                             //com_p++;
                         }
                             //fwrite(key[ev[0].code], sizeof(char), strlen(key[ev[0].code]), shell);
                         else if(sym) {
                             //put_str(key_sym[ev[0].code]);
-                            write_ptm(key_sym[ev[0].code], 1);
+                            write_ptm(key_sym[ev[i].code], 1);
                             //command[com_p] = key_sym[ev[0].code][0];
                             //com_p++;
                         } else
                         {//put_str(key_high[ev[0].code]);
-							write_ptm(key_high[ev[0].code], 1);
+							write_ptm(key_high[ev[i].code], 1);
                             //command[com_p] = key_high[ev[0].code][0];
                             //com_p++;
                         }
                             //fwrite(key[ev[0].code], sizeof(char), strlen(key_high[ev[0].code]), shell);
-                update_part();
+                //update_part();
                 break;
             }
         }
-        if(ev[0].value == 0){
-            switch(ev[0].code){
+        if(ev[i].value == 0){
+            switch(ev[i].code){
             case 0x29: low=1; break;
             case 42: sym=0; break;
             }
         }
+	}
     //    return 0;
 }
 

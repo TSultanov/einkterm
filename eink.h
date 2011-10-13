@@ -14,3 +14,5 @@ int eink_write_buf(void *buf, int len);
 void update_part(void);
 void draw_bitmap(void);
 void init_eink(void);
+int get_disp(void);
+void wait_epd();

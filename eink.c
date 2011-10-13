@@ -116,6 +116,14 @@ int eink_write_buf(void *buf, int len)
     return ioctl(console,S1D13521_MEMBURSTWRITE,&hwc); 
 } 
 
+void wait_epd(void)
+{
+	static s1d13521_ioctl_cmd_params cmd_params;
+	cmd_params.param[0] = (2 << 8);
+	eink_cmd(S1D13521_WAIT_DSPE_TRG,&cmd_params); 
+    eink_cmd(S1D13521_WAIT_DSPE_FREND,&cmd_params);
+}
+
 void update_part(void)
 {
     static s1d13521_ioctl_cmd_params cmd_params;
@@ -126,8 +134,7 @@ void update_part(void)
     eink_cmd(S1D13521_LD_IMG_END, &cmd_params);
     cmd_params.param[0] = (2 << 8);        // 0=init,1,2,3
     eink_cmd(S1D13521_UPD_PART, &cmd_params);
-    eink_cmd(S1D13521_WAIT_DSPE_TRG,&cmd_params); 
-    eink_cmd(S1D13521_WAIT_DSPE_FREND,&cmd_params);
+	wait_epd();
 }
 
 void draw_bitmap(void)
@@ -140,8 +147,7 @@ void draw_bitmap(void)
     eink_cmd(S1D13521_LD_IMG_END, &cmd_params);
     cmd_params.param[0] = (3 << 8);        // 0=init,1,2,3
     eink_cmd(S1D13521_UPD_FULL, &cmd_params);
-    eink_cmd(S1D13521_WAIT_DSPE_TRG,&cmd_params); 
-    eink_cmd(S1D13521_WAIT_DSPE_FREND,&cmd_params);
+    wait_epd();
 }
 
 void init_eink(void)
@@ -151,4 +157,9 @@ void init_eink(void)
     init_s1d13521();
     
     draw_bitmap();
+}
+
+int get_disp(void)
+{
+	return console;
 }
