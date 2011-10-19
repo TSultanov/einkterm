@@ -1,1 +1,3 @@
-This code is fully experimental, so pleae, don't use it.
+This is a terminal for iRiver Story EB02 (probably will work on EB03) ebook reader.
+Currently it has a very limited set of features (text write and read only) and no support for any ESC-seq.
+
