@@ -1,0 +1,3 @@
+Makefile
+mmap access to /dev/fb0 - see examples in kernel
+figure out why device hangs out after 5 minutes of work
